@@ -11,11 +11,9 @@ import java.util.List;
  * Created by Vered on 11/15/2014.
  */
 public class StoryPagerAdapter extends FragmentStatePagerAdapter {
-        private List<String> mPagesText;
 
-        public StoryPagerAdapter(FragmentManager fm,List<String> pagesText) {
+        public StoryPagerAdapter(FragmentManager fm) {
             super(fm);
-            mPagesText = pagesText;
 
         }
 
@@ -23,14 +21,14 @@ public class StoryPagerAdapter extends FragmentStatePagerAdapter {
         public Fragment getItem(int i) {
             Fragment fragment = new StoryPageFragment();
             Bundle args = new Bundle();
-            args.putString(StoryPageFragment.ARG_OBJECT, mPagesText.get(i));
+            args.putInt(StoryPageFragment.ARG_OBJECT, i+1);
             fragment.setArguments(args);
             return fragment;
         }
 
         @Override
         public int getCount() {
-            return mPagesText.size();
+            return 3;
         }
 
         @Override

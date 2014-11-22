@@ -1,46 +1,33 @@
 package com.example.vered.clickword;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends FragmentActivity {
     private StoryPagerAdapter mStoryPagerAdapter;
     private ViewPager mViewPager;
-    private String appDataPath = Environment.getExternalStorageDirectory()+"/ClickWord";
-    private MediaPlayer mediaPlayer = new MediaPlayer();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<String> pagesText = parsePagesDataFromFile();
+//        List<String> pagesText = parsePagesDataFromFile();
         // ViewPager and its adapters use support library
         // fragments, so use getSupportFragmentManager.
         mStoryPagerAdapter =
                 new StoryPagerAdapter(
-                        getSupportFragmentManager(),pagesText);
+                        getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mStoryPagerAdapter);
-        audioPlayer(appDataPath,"zyplenok.ogg");
     }
 
 
-    private List<String> parsePagesDataFromFile(){
+/*
+       private List<String> parsePagesDataFromFile(){
 
         List<String> pagesData = new ArrayList<String>();
         File file = new File(appDataPath,"zyplenokResultUTF8.txt");
@@ -84,7 +71,7 @@ public class MainActivity extends FragmentActivity {
         }
         return pagesData;
     }
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,23 +90,6 @@ public class MainActivity extends FragmentActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-    private void audioPlayer(String path, String fileName){
-        //set up MediaPlayer
-
-        try {
-            mediaPlayer.setDataSource(path + "/" + fileName);
-            mediaPlayer.prepare();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        mediaPlayer.release();
-        mediaPlayer = null;
-        super.onStop();
     }
 
 
