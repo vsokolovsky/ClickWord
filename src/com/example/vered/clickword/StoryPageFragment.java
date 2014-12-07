@@ -21,28 +21,25 @@ import android.widget.TextView;
 /**
  * Created by Vered on 11/15/2014.
  */
-public class StoryPageFragment  extends Fragment {
+public class StoryPageFragment  extends Fragment implements FragmentLifecycle{
     public static final String ARG_OBJECT = "object";
     private String appDataPath = Environment.getExternalStorageDirectory()+"/ClickWord";
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayer mediaPlayer;
     private int pageNum;
-	 @Override
-	public void onStart() {
-		super.onStart();
-	       try {
-	            mediaPlayer.setDataSource(appDataPath+"/1/page"+pageNum+".aac");
-	            mediaPlayer.prepare();
-	            mediaPlayer.start();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	}
+  
+    public void init(int pageNum){
+    	this.pageNum = pageNum;
 
-    
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
     	
-        super.onViewCreated(view, savedInstanceState);
+    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    //    Bundle args = getArguments();
+    //    pageNum =  args.getInt(ARG_OBJECT);
+ 
+        Log.d("*****","on create:"+pageNum);
+
     }
     
     @Override
@@ -54,22 +51,16 @@ public class StoryPageFragment  extends Fragment {
         // properly.
         View rootView = inflater.inflate(
                 R.layout.fragment_story_page, container, false);
-        Bundle args = getArguments();
-        pageNum =  args.getInt(ARG_OBJECT);
-      
+     //   Bundle args = getArguments();
+     //   pageNum =  args.getInt(ARG_OBJECT);
+ 
+        Log.d("*****","on create view:"+pageNum);
+   
         String pageText = getPageText(pageNum);
         ((TextView) rootView.findViewById(R.id.text)).setText(
         		pageText);
-        
-        return rootView;
-    }
- 
 
-    @Override
-    public void onStop() {
-        mediaPlayer.release();
-        mediaPlayer = null;
-        super.onStop();
+        return rootView;
     }
 
     public String getPageText(int i){
@@ -95,5 +86,60 @@ public class StoryPageFragment  extends Fragment {
     	return text.toString();
     }
     
+    @Override
+    public void onResumeFragment() {
+
+ //       Bundle args = getArguments();
+ //       pageNum =  args.getInt(ARG_OBJECT);
+    	Log.d("***", "onResumeFragment() "+pageNum);
+
+    	mediaPlayer = new MediaPlayer();
+   	    Log.d("*****","setDataSource:"+pageNum);
+
+	       try {
+	            mediaPlayer.setDataSource(appDataPath+"/1/page"+pageNum+".aac");
+	        } catch (Exception e) {
+	        	Log.d("Fail", "***failed*** on mediaPlayer setDataSource");
+
+	        }
+
+    	Log.d("*****","prepare and start:"+pageNum);
+	       try {
+	            mediaPlayer.prepare();
+	            mediaPlayer.start();
+	        } catch (Exception e) {
+	        	Log.d("page", "failed on mediaPlayer.start()");
+	            e.printStackTrace();
+	        }
+    }
+    
+    @Override
+    public void onPauseFragment() {
+  //      Bundle args = getArguments();
+  //      pageNum =  args.getInt(ARG_OBJECT);
+   	Log.d("***", "onPauseFragment()" +pageNum);
+       	   
+	   if (mediaPlayer!=null){
+  		   mediaPlayer.stop(); 
+ 		   mediaPlayer.release();
+ 		   mediaPlayer = null;
+ 	   }
+    }
+
+
+    @Override
+    public void onDestroy() {
+ 	   Log.d("*****","on destroy:"+pageNum);
+  	   if (mediaPlayer!=null){
+  		   mediaPlayer.stop(); 
+ 		   mediaPlayer.release();
+ 		   mediaPlayer = null;
+ 	   }
+
+        super.onDestroy();
+    }
+
+
+
 }
 

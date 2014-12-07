@@ -1,8 +1,11 @@
 package com.example.vered.clickword;
 
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -10,9 +13,29 @@ import android.view.MenuItem;
 public class MainActivity extends FragmentActivity {
     private StoryPagerAdapter mStoryPagerAdapter;
     private ViewPager mViewPager;
+    private OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
 
+    private int currentPosition=-1;
+    	@Override
+    	public void onPageSelected(int newPosition) {
+    		Log.d("ChangeListener","onPageSelected:"+newPosition);
+    		FragmentLifecycle fragmentToShow = (FragmentLifecycle)mStoryPagerAdapter.getItem(newPosition);
+    		fragmentToShow.onResumeFragment();
+    		if (currentPosition!=-1){
+	    		FragmentLifecycle fragmentToHide = (FragmentLifecycle)mStoryPagerAdapter.getItem(currentPosition);
+	    		fragmentToHide.onPauseFragment();
+    		}
+    		currentPosition = newPosition;
+    	}
+
+    	@Override
+    	public void onPageScrolled(int arg0, float arg1, int arg2) { }
+
+    	public void onPageScrollStateChanged(int arg0) { }
+    };
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("a","on create main activity");
         setContentView(R.layout.activity_main);
 
 //        List<String> pagesText = parsePagesDataFromFile();
@@ -23,6 +46,8 @@ public class MainActivity extends FragmentActivity {
                         getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mStoryPagerAdapter);
+        mViewPager.setOnPageChangeListener(pageChangeListener);
+        pageChangeListener.onPageSelected(0);
     }
 
 
